@@ -1,4 +1,6 @@
 *.mexw64
 *.mexa64
 
+*.png
+
 petter_example2.m

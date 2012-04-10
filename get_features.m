@@ -134,11 +134,11 @@ for curr = 1:length(sigma);
     hy = diff(h,1,2);
     gradx = imfilter(I,hx,'symmetric');
     grady = imfilter(I,hy,'symmetric');
-    G =sum(gradx(:).^2 +grady(:).^2);
-    
+    G =sqrt(gradx(:).^2 +grady(:).^2);
     
     F(ind) = mean(G);        STR{ind} = ['Mean gradient sigma: ' num2str(sigma(curr))]'; ind = ind+1;
     F(ind) = median(G);      STR{ind} = ['Median gradient sigma: ' num2str(sigma(curr))]'; ind = ind+1;
+	F(ind) = std(G);         STR{ind} = ['Std gradient sigma: ' num2str(sigma(curr))]'; ind = ind+1;
 end
 
 

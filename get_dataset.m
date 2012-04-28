@@ -6,7 +6,7 @@ file = fopen(csvfile);
 try
 	[A c] = textscan(file,'%s%s%s%s','Delimiter',';');
 	n = length(A{1})-1;
-
+	
 	ID = zeros(1,n);
 	POS = zeros(1,n);
 	for i = 1:n
@@ -28,7 +28,7 @@ end
 try
 	[A c] = textscan(file,'%s%s','Delimiter',';');
 	n = length(A{1})-1;
-
+	
 	ID = zeros(1,n);
 	CLASS = zeros(1,n);
 	for i = 1:n

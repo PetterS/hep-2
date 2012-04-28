@@ -1,16 +1,16 @@
 clear all
 clc
 
-% The type of classifier to use 
+% The type of classifier to use
 classifier_type = 'random_forest';
-%classifier_type = 'adaboost';
+% classifier_type = 'adaboost';
 %classifier_type = 'svm';
 
 switch classifier_type
-    case 'svm'
-        classifier_options = '-t 1 -d 3 -gamma 100';
-    otherwise  
-        classifier_options = '';
+	case 'svm'
+		classifier_options = '-t 1 -d 3 -gamma 100';
+	otherwise
+		classifier_options = '';
 end
 
 show_errors = 1;
@@ -35,29 +35,36 @@ h = waitbar(0,'Performing  leave-one-out cross-validation... ');
 matrix = zeros(6,6);
 prob_correct   = [];
 prob_incorrect = [];
+incorrect = [];
 ALL = 1:size(F,1);
 TEST = ALL;
-for id = TEST	
+for id = TEST
 	
 	TRAIN = setdiff(ALL,id);
+	tic
 	classifier = Classifier(classifier_type, F(TRAIN,:),SET.CLASS(TRAIN), classifier_options);
-
-	[estimated prob] = classifier.classify(F(id,:));
+	toc
+	
+	tic
+	[classified prob] = classifier.classify(F(id,:));
+	toc
 	true      = SET.CLASS(id);
 	
-	matrix(true,estimated) = matrix(true,estimated)  + 1;
+	matrix(true,classified) = matrix(true,classified)  + 1;
 	
-	if estimated == true
-		prob_correct(end+1) = prob(estimated);
+	if classified == true
+		prob_correct(end+1) = prob(classified); %#ok<SAGROW>
 	else
-		prob_incorrect(end+1) = prob(estimated);
+		prob_incorrect(end+1) = prob(classified); %#ok<SAGROW>
+		
+		incorrect = [id incorrect];
 		
 		if  show_errors
-            i = show_classification_error(SET,id,estimated,prob);
+			i = show_classification_error(SET,id,classified,prob);
 			if write_error_files
 				imwrite(i,sprintf('test/error%d.png',length(prob_incorrect)));
 			end
-        end
+		end
 	end
 	
 	waitbar(id/length(TEST), h);
@@ -66,20 +73,19 @@ close(h);
 
 
 %% Error/reject
-
 probabilities = linspace(0,1,100);
 
 n=0;
 for itr = probabilities
-   n = n+1;
-   number_false = sum(prob_incorrect > itr);
-   number_true = sum(prob_correct > itr);
-   
-   accuracy(n) =   number_true/(number_true + number_false);
-   if isnan(accuracy(n))
-	   accuracy(n) = 1; % 0 correct out of 0
-   end
-   classified(n) = (number_true + number_false)/ numel(TEST);     
+	n = n+1;
+	number_false = sum(prob_incorrect > itr);
+	number_true = sum(prob_correct > itr);
+	
+	accuracy(n) =   number_true/(number_true + number_false); %#ok<SAGROW>
+	if isnan(accuracy(n))
+		accuracy(n) = 1; %#ok<SAGROW> % 0 correct out of 0
+	end
+	classified(n) = (number_true + number_false)/ numel(TEST);
 end
 
 reject_rate = 1-classified;

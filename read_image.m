@@ -2,7 +2,7 @@ function [I M] = read_image(image_file,mask_file)
 
 % PCA
 meanI = [ 3.4568 41.4073 0.3621];
-comp  = [0.0592 0.9982 0.0006]; 
+comp  = [0.0592 0.9982 0.0006];
 
 I = double(imread(image_file));
 [m n three] = size(I);

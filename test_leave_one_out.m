@@ -39,14 +39,10 @@ ALL = 1:size(F,1);
 TEST = ALL;
 for id = TEST
 	
-	TRAIN = setdiff(ALL,id);
-	tic
+	TRAIN = setdiff(ALL,id);s
 	classifier = Classifier(classifier_type, F(TRAIN,:),SET.CLASS(TRAIN), classifier_options);
-	toc
 	
-	tic
 	[classified prob] = classifier.classify(F(id,:));
-	toc
 	true      = SET.CLASS(id);
 	
 	matrix(true,classified) = matrix(true,classified)  + 1;

@@ -39,7 +39,7 @@ ALL = 1:size(F,1);
 TEST = ALL;
 for id = TEST
 	
-	TRAIN = setdiff(ALL,id);s
+	TRAIN = setdiff(ALL,id);
 	classifier = Classifier(classifier_type, F(TRAIN,:),SET.CLASS(TRAIN), classifier_options);
 	
 	[classified prob] = classifier.classify(F(id,:));

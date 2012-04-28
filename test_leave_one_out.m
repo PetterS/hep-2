@@ -30,7 +30,6 @@ SET             = get_dataset(csvfile);
 %% Leave-one-out cross-validation
 close all
 h = waitbar(0,'Performing  leave-one-out cross-validation... ');
-% classifier = Classifier(classifier_type, F,SET.CLASS, classifier_options);
 
 matrix = zeros(6,6);
 prob_correct   = [];

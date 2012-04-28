@@ -14,7 +14,7 @@ switch classifier_type
 end
 
 show_errors = 1;
-write_error_files = true;
+write_error_files = false;
 
 % The data set to use
 csvfile = 'training/training.csv';

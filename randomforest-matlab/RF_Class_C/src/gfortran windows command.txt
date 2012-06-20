@@ -1,0 +1,3 @@
+In Cygwin:
+
+x86_64-w64-mingw32-gfortran -O2 -fpic -c rfsub.f -o ../precompiled_rfsub/win64/rfsub.o

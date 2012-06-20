@@ -48,7 +48,7 @@ extern void R_qsort_I(double *v, int *I, int i, int j);
 
 extern "C"{
     #ifdef WIN64
-	void _catmax_(double *parentDen, double *tclasscat,
+	void catmax_(double *parentDen, double *tclasscat,
                       double *tclasspop, int *nclass, int *lcat,
                       int *ncatsp, double *critmax, int *nhit,
                       int *maxcat, int *ncmax, int *ncsplit);
@@ -63,7 +63,7 @@ extern "C"{
 }
 extern "C"{
     #ifdef WIN64
-	void _catmaxb_(double *totalWt, double *tclasscat, double *classCount,
+	void catmaxb_(double *totalWt, double *tclasscat, double *classCount,
                        int *nclass, int *nCat, int *nbest, double *critmax,
                        int *nhit, double *catCount) ;
     #endif
@@ -76,7 +76,7 @@ extern "C"{
 }
 
 #ifdef WIN64
-void F77_NAME(_catmax)
+void F77_NAME(catmax)
 #endif
 
 #ifndef WIN64
@@ -145,7 +145,7 @@ void F77_NAME(catmax)
 
 /* Find best split of with categorical variable when there are two classes */
 #ifdef WIN64
-void F77_NAME(_catmaxb)
+void F77_NAME(catmaxb)
 #endif
 #ifndef WIN64
 void F77_NAME(catmaxb)

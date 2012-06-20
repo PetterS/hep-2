@@ -82,7 +82,7 @@ extern uint32 randomMT(void);
  */
 extern "C"{
     #ifdef WIN64
-    void _buildtree_(int *a, int *b, int *cl, int *cat,
+    void buildtree_(int *a, int *b, int *cl, int *cat,
     #endif
     #ifndef WIN64
     void buildtree_(int *a, int *b, int *cl, int *cat,
@@ -101,7 +101,7 @@ extern "C"{
 
 extern "C"{
     #ifdef WIN64
-    void _rrand_(double *r) ;
+    void rrand_(double *r) ;
     #endif 
     
     #ifndef WIN64
@@ -130,7 +130,7 @@ void TestSetError(double *countts, int *jts, int *clts, int *jet, int ntest,
 
 /*  Define the R RNG for use from Fortran. */
 #ifdef WIN64
-void _rrand_(double *r) { *r = unif_rand(); }
+void rrand_(double *r) { *r = unif_rand(); }
 #endif
 
 #ifndef WIN64
@@ -444,7 +444,7 @@ void classRF(double *x, int *dimx, int *cl, int *ncl, int *cat, int *maxcat,
             modA(a, &nuse, nsample, mdim, cat, *maxcat, ncase, jin);
             
             #ifdef WIN64
-            F77_CALL(_buildtree)
+            F77_CALL(buildtree)
             #endif
                     
             #ifndef WIN64

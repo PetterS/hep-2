@@ -1,6 +1,8 @@
 import numpy as np
 import cv2 as cv
 
+from skimage.feature import greycomatrix, greycoprops
+from skimage.measure import regionprops
 
 def get_single(I,M):
     F=[]
@@ -11,10 +13,18 @@ def get_single(I,M):
     # Threshold image at multiple levels
     Theta = np.linspace(minI,maxI,20)
     for theta in Theta :
-        BW = (I > theta).astype(np.uint8)
-        m = cv.moments(BW)
-        for key in m:
-            F.append(m[key])
+        BW = (I > theta).astype(int)
+        wanted_props = ['Area', 'ConvexArea', 'Eccentricity', 'EulerNumber','Perimeter']
+        props = regionprops(BW, wanted_props)
+        if len(props) == 1:
+            props = props[0]
+        elif len(props) == 0:
+            props = {}
+            for p in wanted_props: 
+                props[p] = 0
+                
+        for p in wanted_props:
+            F.append(props[p])
             
         Itmp = I.copy()
         Itmp[I<theta] = 0
@@ -37,7 +47,26 @@ def get_single(I,M):
         F.append( np.median(G) )
         F.append( np.std(G) )
       
-
+    # Grey-level co-occurences
+    for level in range(2,14+1,3) :
+        # Scale image so that it contains 'level' number
+        # of levels
+        It = np.floor( (level*I) / np.max(I) )
+        glcm = greycomatrix(It, [-1, 1], [-np.pi/4, 0, np.pi/4, np.pi/2], levels=level+1);
+        stats = greycoprops(glcm, prop='contrast')
+        F += list( stats.flatten() )
+        stats = greycoprops(glcm, prop='dissimilarity')
+        F += list( stats.flatten() )
+        stats = greycoprops(glcm, prop='homogeneity')
+        F += list( stats.flatten() )
+        stats = greycoprops(glcm, prop='ASM')
+        F += list( stats.flatten() )
+        stats = greycoprops(glcm, prop='energy')
+        F += list( stats.flatten() )
+        stats = greycoprops(glcm, prop='correlation')
+        F += list( stats.flatten() )
+        
+	  
     # Aspect ratio
     F.append( float(I.shape[0]) / float(I.shape[1]) )
     

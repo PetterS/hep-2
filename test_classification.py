@@ -10,7 +10,10 @@ import csv
 from time import time
 import cv2 as cv
 
+from petter import ProgressBar
+
 import features 
+
 
 # Features from Matlab; not used
 contents = scipy.io.loadmat('features.mat')
@@ -18,10 +21,14 @@ F = contents['F']
 F_STR = contents['F_STR']
 
 # Read in data set 
+lines = []
+for line in csv.reader(open('training/gt_training.csv','r'), delimiter=';') :
+    lines.append(line)
 CLASS = []
 I = []
 M = []
-for line in csv.reader(open('training/gt_training.csv','r'), delimiter=';'):
+progress_bar = ProgressBar(len(lines), 'Reading images...')
+for line in lines:
     cls = line[1]
     if cls == 'homogeneous':
         CLASS.append( 1 )
@@ -36,23 +43,28 @@ for line in csv.reader(open('training/gt_training.csv','r'), delimiter=';'):
     elif cls == 'cytoplasmatic':
         CLASS.append( 6 )
     else:
+        progress_bar.progress()
         continue
     id = int(line[0])
     I.append( cv.imread('training/%03d.png' % id , 0) )
     M.append( cv.imread('training/%03d_mask.png' % id, 0) )
+    
+    progress_bar.progress()
+	
 CLASS = np.array(CLASS)
 
 
 n = len(I)                       # Number of training examples
 m = len(features.get(I[0],M[0])) # Number of features
+print 'Feature dimension:', m
 
 #Compute features
 start = time()
 F = np.zeros((n, m))
+progress_bar = ProgressBar(n, 'Computing features...')
 for i in range(n) :
-    print '#%03d...' % i,
     F[i,] = features.get(I[i],M[i])
-    print ' done.'
+    progress_bar.progress()
 features_time = time()-start
 
 # Split data set in half
@@ -60,12 +72,14 @@ TRAIN = range(0,n//2)
 TEST  = range(n//2,n)
 
 # Train classifier
+print 'Training classifier...'
 start = time()
 clf = RandomForestClassifier(n_estimators=100)
 clf = clf.fit(F[TRAIN,],CLASS[TRAIN])
 training_time = time()-start
 
 # Predict
+print 'Predicting...'
 start = time()
 pred = clf.predict(F[TEST,])
 true = CLASS[TEST]

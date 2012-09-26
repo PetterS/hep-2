@@ -42,6 +42,9 @@ classdef Classifier
 						[~, self.model{class}]=adaboost('train',F,Y,training_it);
 						fprintf('done.\n');
 					end
+				case 'adaboost_matlab'
+					Y = num2cell(num2str(C'));
+					self.model = fitensemble(F,Y,'AdaBoostM2',100,'tree');
 				case 'random_forest'
 					% Add the random forest code to the path if needed
 					if  ~(exist('classRF_train'))
@@ -112,6 +115,13 @@ classdef Classifier
 						C(m) = find(w==max(w),1);
 						P(m,C)=1;
 					end
+				case 'adaboost_matlab'
+					result = self.model.predict(F);
+					C = zeros(length(result), 1);
+					for i = 1:length(result)
+						C(i) = str2num(result{i});
+						P(i, C(i))=1;
+					end
 				case 'random_forest'
 					
 					if self.options.use_weighted_trees
@@ -142,8 +152,12 @@ classdef Classifier
 					end
 					P(C)=1;
 				case 'svm'
-					C = svmpredict(0,F, self.model);
-					P(C)=1;
+					C = zeros(size(F, 1), 1);
+					for i = 1:size(F, 1)
+						C(i) = svmpredict(0, F(i, :), self.model);
+						P(i, C(i))=1;
+					end
+					
 			end
 		end
 		

@@ -2,7 +2,7 @@ clear all
 clc
 
 % The type of classifier to use 
-classifier_types = {'random_forest', 'adaboost', 'svm'};
+classifier_types = {'random_forest', 'svm', 'nn', '3nn', '5nn'};
 n_types = length(classifier_types);
 
 classifier_options = cell(3,1);
@@ -73,9 +73,11 @@ end
 for t = 1:n_types
 	type = classifier_types{t};
 
+	tic
 	C = classifier{t}.classify(F(TEST,:));
+	time_taken = toc;
 	CORRECT = SET.CLASS(TEST);
 	ncorrect = sum(C(:) == CORRECT(:));
 	result = ncorrect / length(TEST);
-	fprintf('Result for %s: %.2f%%.\n', type, 100*result);
+	fprintf('Result for %s: %.2f%%  (%.2f s).\n', type, 100*result, time_taken);
 end

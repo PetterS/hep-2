@@ -19,6 +19,11 @@ classdef Classifier
 	
 	properties
 		model
+		F
+		C
+		k
+		w
+		normtype
 		type
 		nclasses
 		options
@@ -30,7 +35,18 @@ classdef Classifier
 		function self = Classifier(type,F,C,options)
 			self.options = options;
 			self.type = type;
+			self.k = 1;
+			self.normtype = 1;
 			self.nclasses = max(C);
+			
+			if strcmp(self.type, '3nn')
+				self.k = 3;
+				self.type = 'nn';
+			elseif strcmp(self.type, '5nn')
+				self.k = 5;
+				self.type = 'nn';
+			end
+			
 			switch self.type
 				case 'adaboost'
 					training_it = 25*size(F,2);
@@ -96,6 +112,17 @@ classdef Classifier
 					end
 					self.model = svmtrain(C', F, options);
 					
+				case 'nn'
+					% Compute the standard deviation of each feature
+					% component.
+					self.w = std(F) + eps;
+					% Save the weighted features.
+					self.F = F;
+					for i = 1:size(self.F, 1)
+						self.F(i, :) = self.F(i, :) ./ self.w;
+					end
+					% Save the correct classes.
+					self.C = C;
 					
 				otherwise
 					error('Unknown classifier type');
@@ -158,6 +185,30 @@ classdef Classifier
 						P(i, C(i))=1;
 					end
 					
+				case 'nn'
+					% The number of instances to classify.
+					n = size(self.F, 1);
+					% Allocate the output vector.
+					C = zeros(size(F, 1), 1);
+					for i = 1:size(F, 1)
+						% The feature vector to classify should be
+						% weighted.
+						f = F(i, :) ./ self.w;
+						% Compute the distance to the vectors in the
+						% training set.
+						dist = zeros(n, 1);
+						for k = 1:n
+							dist(k) = norm(f - self.F(k, :), self.normtype);
+						end
+% 						dist = sum((repmat(f, [n 1]) - self.F).^2, 2);
+						% Sort the distances and find the closest classes.
+						[~, ind] = sort(dist);
+						ind = ind(1:self.k);
+						classes = self.C(ind);
+						% Pick the most common class
+						C(i) = mode(classes);
+						P(i, C(i))=1;
+					end
 			end
 		end
 		

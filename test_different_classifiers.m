@@ -60,24 +60,25 @@ fprintf('\n');
 
 %% Create classifiers
 classifier = cell(n_types, 1);
+C_train = SET.CLASS(TRAIN)';
 for t = 1:n_types
 	type = classifier_types{t};
 	options = classifier_options{t};
 	
 	tic
-	classifier{t} = Classifier(type, F(TRAIN,:), SET.CLASS(TRAIN), options);
+	classifier{t} = Classifier(type, F(TRAIN,:), C_train, options);
 	fprintf('Training time for %s: %.2f seconds.\n', type, toc);
 end
 
 %% Evaluate classifiers
+C_test = SET.CLASS(TEST)';
 for t = 1:n_types
 	type = classifier_types{t};
 
 	tic
 	C = classifier{t}.classify(F(TEST,:));
 	time_taken = toc;
-	CORRECT = SET.CLASS(TEST);
-	ncorrect = sum(C(:) == CORRECT(:));
+	ncorrect = sum(C == C_test);
 	result = ncorrect / length(TEST);
 	fprintf('Result for %s: %.2f%%  (%.2f s).\n', type, 100*result, time_taken);
 end

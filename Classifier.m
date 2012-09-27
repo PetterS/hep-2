@@ -39,6 +39,9 @@ classdef Classifier
 			self.normtype = 1;
 			self.nclasses = max(C);
 			
+			assert(size(F, 1) == size(C, 1));
+			assert(size(C, 2) == 1);
+			
 			if strcmp(self.type, '3nn')
 				self.k = 3;
 				self.type = 'nn';
@@ -110,7 +113,7 @@ classdef Classifier
 						dir = fileparts(mfilename('fullpath'));
 						addpath([dir filesep  'libsvm' filesep 'matlab']);
 					end
-					self.model = svmtrain(C', F, options);
+					self.model = svmtrain(C, F, options);
 					
 				case 'nn'
 					% Compute the standard deviation of each feature

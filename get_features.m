@@ -17,11 +17,11 @@ Iblur2 = imfilter(I,hfilter2,'symmetric');
 F = [F1,F2-F1,F3-F2];
 
 if nargout > 1
-	STR = cell(size(STR1,1)+size(STR2,1) +size(STR3,1),1);
-	for im_num = 1:size(STR1,1)
+	STR = cell(length(STR1)+length(STR2) + length(STR3), 1);
+	for im_num = 1:length(STR1)
 		STR{im_num} = STR1{im_num};
-		STR{im_num + size(STR1,1)} = [STR2{im_num} ' blur 1'];
-		STR{im_num + size(STR1,1)+size(STR2,1)} = [STR3{im_num} 'blur 2'];
+		STR{im_num + length(STR1)} = [STR2{im_num} ' -- blur 1'];
+		STR{im_num + length(STR1) + length(STR2)} = [STR3{im_num} ' -- blur 2'];
 	end
 end
 
@@ -136,9 +136,9 @@ for curr = 1:length(sigma);
 	grady = double( imfilter(I,hy,'symmetric') );
 	G =sqrt(gradx(:).^2 +grady(:).^2);
 	
-	F(ind) = mean(G);        STR{ind} = ['Mean gradient sigma: ' num2str(sigma(curr))]'; ind = ind+1;
-	F(ind) = median(G);      STR{ind} = ['Median gradient sigma: ' num2str(sigma(curr))]'; ind = ind+1;
-	F(ind) = std(G);         STR{ind} = ['Std gradient sigma: ' num2str(sigma(curr))]'; ind = ind+1;
+	F(ind) = mean(G);        STR{ind} = ['Mean gradient sigma: ' num2str(sigma(curr))]; ind = ind+1;
+	F(ind) = median(G);      STR{ind} = ['Median gradient sigma: ' num2str(sigma(curr))]; ind = ind+1;
+	F(ind) = std(G);         STR{ind} = ['Std gradient sigma: ' num2str(sigma(curr))]; ind = ind+1;
 end
 
 

@@ -1,0 +1,1 @@
+This folder will contain cached features. Delete the mat-files in this folder if the features should be recomputed.

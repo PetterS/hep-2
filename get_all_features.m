@@ -1,26 +1,21 @@
-function [F F_STR] = get_all_features(SET)
-if exist('features.mat', 'file')
-	load features
+function [F, F_STR] = get_all_features(SET)
+
+cache_filename = ['cache' filesep SET.filename '-features.mat'];
+
+if exist(cache_filename, 'file')
+	load(cache_filename);
 else
-	h = waitbar(0,'Computing features... ');
-	i=0;
+	h = waitbar(0, ['Computing ' strrep(cache_filename,'\','\\') '... ']);
 	total_time = 0;
-	for id = SET.ID
+	for i = 1:SET.n
 	    tic
-			image_file = sprintf('%s%s%03d.png',SET.path,filesep,id);
-			mask_file  = sprintf('%s%s%03d_mask.png',SET.path,filesep,id);
-			[I M] = read_image(image_file, mask_file);
-
-			[F(i+1,:) F_STR] = get_features(I,M,SET.POS(id)); %#ok<AGROW>
-
-	        total_time = total_time + toc;
-
-		i=i+1;
+		[F(i,:), F_STR] = get_features(SET.I{i},SET.M{i},SET.POS(i)); %#ok<AGROW>
+		total_time = total_time + toc;
 		waitbar(i/length(SET.ID), h);
 	end
 	close(h);
 
-	fprintf('Avg. time for loading image and computing features: %.2fs\n',total_time/length(SET.ID));
+	fprintf('Avg. time for computing features: %.2fs\n',total_time/length(SET.ID));
 
-	save features F F_STR
+	save(cache_filename, 'F', 'F_STR');
 end

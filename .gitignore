@@ -3,4 +3,9 @@
 
 *.png
 
-petter_example2.m
+dataset/ICPR2012_Cells_Classification_Contest
+dataset/Main_Dataset
+cache/*.mat
+
+*.pyc
+

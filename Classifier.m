@@ -84,6 +84,10 @@ classdef Classifier
 					n_trees = 500;
 					n_tries = floor(sqrt(size(F,2)+1));
 					
+					if ~exist('mexClassRF_train')
+						error('Please compile: random-forest.');
+					end
+					
 					self.model = classRF_train(F,C, n_trees, n_tries, local_options);
 					
 					
@@ -114,7 +118,7 @@ classdef Classifier
 					end
 					
 					if ~(exist('libsvmwrite'))
-						error('Please compile LIBSVM');
+						error('Please compile: libsvm.');
 					end
 					
 					self.model = svmtrain(C, F, options);

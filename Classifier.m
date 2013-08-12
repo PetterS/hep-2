@@ -108,11 +108,15 @@ classdef Classifier
 					self.model = TreeBagger(n_trees,F,C);
 					
 				case 'svm'
-					
 					if ~(exist('svmpredict'));
 						dir = fileparts(mfilename('fullpath'));
 						addpath([dir filesep  'libsvm' filesep 'matlab']);
 					end
+					
+					if ~(exist('libsvmwrite'))
+						error('Please compile LIBSVM');
+					end
+					
 					self.model = svmtrain(C, F, options);
 					
 				case 'nn'
